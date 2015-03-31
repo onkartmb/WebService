@@ -5,20 +5,21 @@ import java.util.ArrayList;
 
 import com.mysql.jdbc.ResultSet;
 
+import model.BusStop;
 import model.BusStopDAO;
+import model.DAOFactory;
 
 public class BusStopDetails {
 
 	public static void main(String args[]) {
-
-		ArrayList busStopData = new BusStopDAO().getDetails();
+		DAOFactory factory = new DAOFactory();
+		ArrayList<BusStop> busStopData = factory.getDetails(new BusStopDAO());
 		try {
-			while (busStopData.next()) {
-				System.out.println("Bus ID=" + busStopData.getString("BS_Id"));
-				System.out.println("Bus Name="
-						+ busStopData.getString("BS_Name"));
+			for (BusStop busStop : busStopData) {
+				System.out.println("Bus ID=" + busStop.getBusStopId());
+				System.out.println("Bus Name="+busStop.getBusName());
 			}
-		} catch (SQLException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}

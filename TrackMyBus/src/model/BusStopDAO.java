@@ -9,8 +9,22 @@ import java.util.ArrayList;
 import com.mysql.jdbc.Statement;
 
 public class BusStopDAO implements DAOTemplate {
+	private BusStop busStop;
 
 	public BusStopDAO() {
+	}
+
+	public BusStopDAO(BusStop busStop) {
+
+		setBusStop(busStop);
+	}
+
+	public BusStop getBusStop() {
+		return busStop;
+	}
+
+	public void setBusStop(BusStop busStop) {
+		this.busStop = busStop;
 	}
 
 	public ArrayList getDetails() {
@@ -20,11 +34,9 @@ public class BusStopDAO implements DAOTemplate {
 		ArrayList<BusStop> obj = new ArrayList<BusStop>();
 		try {
 			con = DBConnect.connect();
-			CallableStatement cs = con.prepareCall(
-					"{call getAllBusStopDetails(?)}",
-					ResultSet.TYPE_SCROLL_INSENSITIVE,
-					ResultSet.CONCUR_READ_ONLY);
-			rs = cs.executeQuery();
+			stmt = (Statement) con.createStatement();
+			rs = (ResultSet) stmt.executeQuery("select * from busstop");
+
 			while (rs.next()) {
 
 				BusStop busStop = new BusStop();
@@ -37,11 +49,11 @@ public class BusStopDAO implements DAOTemplate {
 
 				obj.add(busStop);
 			}
-			stmt = (Statement) con.createStatement();
-			rs = (ResultSet) stmt.executeQuery("select * from busstop");
 
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			DBConnect.disConnect(con);
 		}
 
 		return obj;
